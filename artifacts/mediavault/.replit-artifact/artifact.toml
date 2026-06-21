@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "MediaVault"
+version = "1.0.0"
+id = "artifacts/mediavault"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21865
+
+[services.development]
+run = "pnpm --filter @workspace/mediavault run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/mediavault", "run", "build" ]
+publicDir = "artifacts/mediavault/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21865"
+BASE_PATH = "/"

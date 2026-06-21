@@ -1,22 +1,28 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: MediaVault API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: media
+  - name: library
+  - name: metadata
+  - name: playlists
+  - name: player
+  - name: settings
+  - name: stats
+  - name: searches
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +30,761 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ── Library Folders ──────────────────────────────────────────────────────
+  /library/folders:
+    get:
+      operationId: getLibraryFolders
+      tags: [library]
+      summary: List all library folders
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LibraryFolder"
+    post:
+      operationId: addLibraryFolder
+      tags: [library]
+      summary: Add a library folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LibraryFolderInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LibraryFolder"
+
+  /library/folders/{id}:
+    delete:
+      operationId: removeLibraryFolder
+      tags: [library]
+      summary: Remove a library folder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /library/scan:
+    post:
+      operationId: scanLibrary
+      tags: [library]
+      summary: Trigger a library scan
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScanOptions"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanResult"
+
+  # ── Media Files ───────────────────────────────────────────────────────────
+  /media:
+    get:
+      operationId: listMedia
+      tags: [media]
+      summary: List and search media files
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [video, audio, all]
+        - name: tags
+          in: query
+          schema:
+            type: string
+        - name: rating
+          in: query
+          schema:
+            type: integer
+        - name: favorite
+          in: query
+          schema:
+            type: boolean
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [available, offline, all]
+        - name: sort
+          in: query
+          schema:
+            type: string
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: filters
+          in: query
+          schema:
+            type: string
+          description: JSON-encoded advanced filter object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaPage"
+
+  /media/{id}:
+    get:
+      operationId: getMedia
+      tags: [media]
+      summary: Get a single media file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaFile"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateMedia
+      tags: [media]
+      summary: Update media metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MediaUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaFile"
+    delete:
+      operationId: deleteMedia
+      tags: [media]
+      summary: Remove a media file from the library (does not delete the file)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /media/{id}/metadata:
+    get:
+      operationId: getMediaMetadata
+      tags: [media]
+      summary: Get all metadata for a media file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MediaMetadataEntry"
+    put:
+      operationId: setMediaMetadata
+      tags: [media]
+      summary: Replace all metadata for a media file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MediaMetadataInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MediaMetadataEntry"
+
+  /media/bulk:
+    patch:
+      operationId: bulkUpdateMedia
+      tags: [media]
+      summary: Bulk update media metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkMediaUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BulkResult"
+
+  # ── Metadata Categories & Values ─────────────────────────────────────────
+  /metadata/categories:
+    get:
+      operationId: getMetadataCategories
+      tags: [metadata]
+      summary: List all metadata categories
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MetadataCategory"
+    post:
+      operationId: createMetadataCategory
+      tags: [metadata]
+      summary: Create a metadata category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MetadataCategoryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataCategory"
+
+  /metadata/categories/{id}:
+    patch:
+      operationId: updateMetadataCategory
+      tags: [metadata]
+      summary: Update a metadata category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MetadataCategoryUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataCategory"
+    delete:
+      operationId: deleteMetadataCategory
+      tags: [metadata]
+      summary: Delete a metadata category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /metadata/values:
+    get:
+      operationId: getMetadataValues
+      tags: [metadata]
+      summary: List metadata values (optionally filtered by category)
+      parameters:
+        - name: categoryId
+          in: query
+          schema:
+            type: integer
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MetadataValue"
+
+  /metadata/values/{id}:
+    patch:
+      operationId: updateMetadataValue
+      tags: [metadata]
+      summary: Rename a metadata value
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MetadataValueUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataValue"
+    delete:
+      operationId: deleteMetadataValue
+      tags: [metadata]
+      summary: Delete a metadata value
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /metadata/values/merge:
+    post:
+      operationId: mergeMetadataValues
+      tags: [metadata]
+      summary: Merge multiple metadata values into one
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MergeValuesInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetadataValue"
+
+  # ── Playlists ─────────────────────────────────────────────────────────────
+  /playlists:
+    get:
+      operationId: getPlaylists
+      tags: [playlists]
+      summary: List all playlists
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Playlist"
+    post:
+      operationId: createPlaylist
+      tags: [playlists]
+      summary: Create a playlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaylistInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Playlist"
+
+  /playlists/{id}:
+    get:
+      operationId: getPlaylist
+      tags: [playlists]
+      summary: Get a playlist with its items
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistDetail"
+        "404":
+          description: Not found
+    patch:
+      operationId: updatePlaylist
+      tags: [playlists]
+      summary: Update a playlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaylistUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Playlist"
+    delete:
+      operationId: deletePlaylist
+      tags: [playlists]
+      summary: Delete a playlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /playlists/{id}/items:
+    post:
+      operationId: addToPlaylist
+      tags: [playlists]
+      summary: Add media items to a playlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaylistItemsInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistDetail"
+    put:
+      operationId: reorderPlaylist
+      tags: [playlists]
+      summary: Reorder playlist items
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaylistReorderInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaylistDetail"
+
+  /playlists/{id}/items/{itemId}:
+    delete:
+      operationId: removeFromPlaylist
+      tags: [playlists]
+      summary: Remove an item from a playlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Playback / Player ─────────────────────────────────────────────────────
+  /player/history:
+    get:
+      operationId: getPlaybackHistory
+      tags: [player]
+      summary: Get playback history
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlaybackEntry"
+
+  /player/progress:
+    post:
+      operationId: savePlaybackProgress
+      tags: [player]
+      summary: Save playback progress for a media file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaybackProgressInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaybackEntry"
+
+  /player/progress/{mediaId}:
+    get:
+      operationId: getPlaybackProgress
+      tags: [player]
+      summary: Get saved playback progress for a media file
+      parameters:
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlaybackEntry"
+        "404":
+          description: Not found
+
+  # ── Saved Searches ────────────────────────────────────────────────────────
+  /searches:
+    get:
+      operationId: getSavedSearches
+      tags: [searches]
+      summary: List saved searches
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SavedSearch"
+    post:
+      operationId: createSavedSearch
+      tags: [searches]
+      summary: Save a search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSearchInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSearch"
+
+  /searches/{id}:
+    delete:
+      operationId: deleteSavedSearch
+      tags: [searches]
+      summary: Delete a saved search
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── Settings ──────────────────────────────────────────────────────────────
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get all application settings
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+    patch:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update application settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppSettingsUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+
+  # ── Stats / Dashboard ─────────────────────────────────────────────────────
+  /stats/overview:
+    get:
+      operationId: getLibraryStats
+      tags: [stats]
+      summary: Get library statistics overview
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LibraryStats"
+
+  /stats/recent:
+    get:
+      operationId: getRecentMedia
+      tags: [stats]
+      summary: Get recently added and recently played media
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecentMedia"
+
+  /stats/top:
+    get:
+      operationId: getTopMedia
+      tags: [stats]
+      summary: Get most played media
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MediaFile"
+
+# ── Schemas ───────────────────────────────────────────────────────────────
 components:
   schemas:
     HealthStatus:
@@ -31,6 +792,518 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    LibraryFolder:
+      type: object
+      properties:
+        id:
+          type: integer
+        path:
+          type: string
+        name:
+          type: string
+        enabled:
+          type: boolean
+        lastScanned:
+          type: ["string", "null"]
+        fileCount:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, path, name, enabled, fileCount, createdAt]
+
+    LibraryFolderInput:
+      type: object
+      properties:
+        path:
+          type: string
+        name:
+          type: string
+      required: [path]
+
+    ScanOptions:
+      type: object
+      properties:
+        folderId:
+          type: ["integer", "null"]
+        full:
+          type: boolean
+
+    ScanResult:
+      type: object
+      properties:
+        added:
+          type: integer
+        updated:
+          type: integer
+        removed:
+          type: integer
+        duration:
+          type: number
+      required: [added, updated, removed, duration]
+
+    MediaFile:
+      type: object
+      properties:
+        id:
+          type: integer
+        path:
+          type: string
+        filename:
+          type: string
+        type:
+          type: string
+          enum: [video, audio]
+        size:
+          type: integer
+        duration:
+          type: ["number", "null"]
+        width:
+          type: ["integer", "null"]
+        height:
+          type: ["integer", "null"]
+        fps:
+          type: ["number", "null"]
+        bitrate:
+          type: ["integer", "null"]
+        codec:
+          type: ["string", "null"]
+        format:
+          type: string
+        thumbnail:
+          type: ["string", "null"]
+        rating:
+          type: ["integer", "null"]
+        favorite:
+          type: boolean
+        playCount:
+          type: integer
+        lastPlayed:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [available, offline]
+        dateAdded:
+          type: string
+        dateModified:
+          type: string
+        folderId:
+          type: ["integer", "null"]
+        metadata:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaMetadataEntry"
+      required: [id, path, filename, type, size, format, favorite, playCount, status, dateAdded, dateModified]
+
+    MediaPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaFile"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        pages:
+          type: integer
+      required: [items, total, page, limit, pages]
+
+    MediaUpdate:
+      type: object
+      properties:
+        rating:
+          type: ["integer", "null"]
+        favorite:
+          type: boolean
+        thumbnail:
+          type: ["string", "null"]
+
+    MediaMetadataEntry:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+        categoryName:
+          type: string
+        categorySlug:
+          type: string
+        valueId:
+          type: integer
+        value:
+          type: string
+      required: [categoryId, categoryName, categorySlug, valueId, value]
+
+    MediaMetadataInput:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              categoryId:
+                type: integer
+              value:
+                type: string
+            required: [categoryId, value]
+      required: [entries]
+
+    BulkMediaUpdate:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+        rating:
+          type: ["integer", "null"]
+        favorite:
+          type: boolean
+        addMetadata:
+          type: array
+          items:
+            type: object
+            properties:
+              categoryId:
+                type: integer
+              value:
+                type: string
+            required: [categoryId, value]
+        removeMetadataCategoryIds:
+          type: array
+          items:
+            type: integer
+      required: [ids]
+
+    BulkResult:
+      type: object
+      properties:
+        updated:
+          type: integer
+      required: [updated]
+
+    MetadataCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        isDefault:
+          type: boolean
+        valueCount:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, name, slug, isDefault, valueCount, createdAt]
+
+    MetadataCategoryInput:
+      type: object
+      properties:
+        name:
+          type: string
+      required: [name]
+
+    MetadataCategoryUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+
+    MetadataValue:
+      type: object
+      properties:
+        id:
+          type: integer
+        categoryId:
+          type: integer
+        value:
+          type: string
+        mediaCount:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, categoryId, value, mediaCount, createdAt]
+
+    MetadataValueUpdate:
+      type: object
+      properties:
+        value:
+          type: string
+      required: [value]
+
+    MergeValuesInput:
+      type: object
+      properties:
+        sourceIds:
+          type: array
+          items:
+            type: integer
+        targetValue:
+          type: string
+      required: [sourceIds, targetValue]
+
+    Playlist:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        isSmart:
+          type: boolean
+        smartFilters:
+          type: ["string", "null"]
+        itemCount:
+          type: integer
+        totalDuration:
+          type: ["number", "null"]
+        thumbnail:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, name, isSmart, itemCount, createdAt, updatedAt]
+
+    PlaylistInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        isSmart:
+          type: boolean
+        smartFilters:
+          type: string
+        mediaIds:
+          type: array
+          items:
+            type: integer
+      required: [name]
+
+    PlaylistUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        smartFilters:
+          type: ["string", "null"]
+
+    PlaylistDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        isSmart:
+          type: boolean
+        smartFilters:
+          type: ["string", "null"]
+        itemCount:
+          type: integer
+        totalDuration:
+          type: ["number", "null"]
+        thumbnail:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlaylistItem"
+      required: [id, name, isSmart, itemCount, createdAt, updatedAt, items]
+
+    PlaylistItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        position:
+          type: integer
+        media:
+          $ref: "#/components/schemas/MediaFile"
+      required: [id, position, media]
+
+    PlaylistItemsInput:
+      type: object
+      properties:
+        mediaIds:
+          type: array
+          items:
+            type: integer
+      required: [mediaIds]
+
+    PlaylistReorderInput:
+      type: object
+      properties:
+        order:
+          type: array
+          items:
+            type: integer
+          description: Ordered list of playlist item IDs
+      required: [order]
+
+    PlaybackEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        mediaId:
+          type: integer
+        position:
+          type: number
+        duration:
+          type: ["number", "null"]
+        completed:
+          type: boolean
+        playedAt:
+          type: string
+        media:
+          $ref: "#/components/schemas/MediaFile"
+      required: [id, mediaId, position, completed, playedAt]
+
+    PlaybackProgressInput:
+      type: object
+      properties:
+        mediaId:
+          type: integer
+        position:
+          type: number
+        duration:
+          type: ["number", "null"]
+        completed:
+          type: boolean
+      required: [mediaId, position]
+
+    SavedSearch:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        filters:
+          type: string
+        createdAt:
+          type: string
+      required: [id, name, filters, createdAt]
+
+    SavedSearchInput:
+      type: object
+      properties:
+        name:
+          type: string
+        filters:
+          type: string
+      required: [name, filters]
+
+    AppSettings:
+      type: object
+      properties:
+        theme:
+          type: string
+          enum: [dark, light, system]
+        thumbnailSize:
+          type: string
+          enum: [small, medium, large]
+        autoScan:
+          type: boolean
+        scanInterval:
+          type: integer
+        defaultView:
+          type: string
+          enum: [grid, list]
+        videoPlayer:
+          type: string
+        audioPlayer:
+          type: string
+        resumePlayback:
+          type: boolean
+        showOfflineFiles:
+          type: boolean
+      required: [theme, thumbnailSize, autoScan, scanInterval, defaultView, resumePlayback, showOfflineFiles]
+
+    AppSettingsUpdate:
+      type: object
+      properties:
+        theme:
+          type: string
+          enum: [dark, light, system]
+        thumbnailSize:
+          type: string
+          enum: [small, medium, large]
+        autoScan:
+          type: boolean
+        scanInterval:
+          type: integer
+        defaultView:
+          type: string
+          enum: [grid, list]
+        resumePlayback:
+          type: boolean
+        showOfflineFiles:
+          type: boolean
+
+    LibraryStats:
+      type: object
+      properties:
+        totalFiles:
+          type: integer
+        videoCount:
+          type: integer
+        audioCount:
+          type: integer
+        totalDuration:
+          type: number
+        totalSize:
+          type: integer
+        totalPlaylists:
+          type: integer
+        totalTags:
+          type: integer
+        offlineCount:
+          type: integer
+        favoriteCount:
+          type: integer
+        topCategories:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              count:
+                type: integer
+            required: [name, count]
+      required: [totalFiles, videoCount, audioCount, totalDuration, totalSize, totalPlaylists, totalTags, offlineCount, favoriteCount, topCategories]
+
+    RecentMedia:
+      type: object
+      properties:
+        recentlyAdded:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaFile"
+        recentlyPlayed:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaFile"
+      required: [recentlyAdded, recentlyPlayed]

@@ -1,0 +1,373 @@
+I want you to help me build a desktop application called **MediaVault** (name can be changed later).
+
+The application must be a completely offline, local-first media manager and media player. It should never require cloud services, user accounts, internet connectivity, or online databases. All data must be stored locally on the user's device.
+
+## Primary Purpose
+
+The application should:
+
+* Scan and index local video and audio files.
+* Play video and audio files.
+* Allow extensive metadata management through custom tagging systems.
+* Allow advanced searching and filtering.
+* Allow playlist creation and management.
+* Handle large media libraries efficiently.
+
+## Platform Requirements
+
+Create this as a desktop application.
+
+Preferred technology stack:
+
+* Frontend: React + TypeScript
+* Desktop Framework: Electron or Tauri
+* Database: SQLite
+* Media Playback: Native video/audio playback libraries
+* State Management: Modern React approach
+
+The application should be designed with future scalability in mind.
+
+## Main Pages
+
+### Home Page
+
+Display:
+
+* Recently added media
+* Recently played media
+* Most played media
+* Library statistics
+* Quick access to playlists
+* Quick access to saved searches
+
+### Search Page
+
+This is the most important page.
+
+Users must be able to search and filter media using:
+
+* Tags
+* Models
+* Artists
+* Song Names
+* Creators
+* Websites
+* File Type
+* Duration
+* Resolution
+* Aspect Ratio
+* Video Quality
+* Audio Quality
+* Date Added
+* Date Modified
+* File Size
+* Rating
+* Favorites
+
+Filters must be combinable.
+
+Examples:
+
+* Videos tagged "Fantasy" AND "Dragon"
+* Videos featuring a specific model
+* Audio files longer than 10 minutes
+* 16:9 videos only
+* Videos with 1080p or higher quality
+* Files from a specific website
+
+The search engine should support:
+
+* AND logic
+* OR logic
+* NOT logic
+* Multi-select filtering
+* Saved searches
+
+### Playlists Page
+
+Users must be able to:
+
+* Create playlists
+* Edit playlists
+* Delete playlists
+* Reorder playlist items
+* Shuffle playlists
+* Export playlists
+* Import playlists
+* Create smart playlists based on filters
+
+### Settings Page
+
+Settings should include:
+
+* Media library folders
+* Database management
+* Backup and restore
+* Theme settings
+* Playback settings
+* Thumbnail settings
+* Metadata settings
+* Scan behavior settings
+
+## Media Metadata System
+
+The application must support multiple metadata categories.
+
+Default categories:
+
+* Tags
+* Models
+* Artists
+* Song Names
+* Creators
+* Websites
+
+Each media file can have multiple values in each category.
+
+Example:
+
+Video A:
+
+Tags:
+
+* Fantasy
+* Dragon
+* Adventure
+
+Models:
+
+* John Smith
+* Jane Doe
+
+Creator:
+
+* Creator A
+
+Website:
+
+* Example Site
+
+## Custom Metadata Categories
+
+Users must be able to create entirely new metadata categories.
+
+Examples:
+
+* Characters
+* Series
+* Studios
+* Genres
+* Languages
+* Locations
+
+Users should be able to:
+
+* Create category
+* Rename category
+* Delete category
+* Merge values
+* Bulk edit values
+
+The system should dynamically generate search filters for newly created categories.
+
+## File Management
+
+The app should:
+
+* Read local files from selected folders.
+* Support multiple library folders.
+* Automatically detect new files.
+* Detect deleted files.
+* Rescan libraries manually.
+* Refresh metadata.
+
+Supported formats should include common video and audio formats.
+
+## Media Player Requirements
+
+### Video Player
+
+Support:
+
+* Play/Pause
+* Seek
+* Volume control
+* Playback speed
+* Fullscreen
+* Subtitle support
+* Frame stepping
+* Resume playback position
+
+### Audio Player
+
+Support:
+
+* Play/Pause
+* Seek
+* Volume control
+* Playback speed
+* Background playback
+* Resume playback position
+
+## Thumbnail System
+
+Generate and cache thumbnails locally.
+
+Allow:
+
+* Custom thumbnails
+* Thumbnail regeneration
+* Thumbnail cache management
+
+## Database Design
+
+Design a proper relational SQLite schema.
+
+Include tables for:
+
+* Media Files
+* Metadata Categories
+* Metadata Values
+* Media Metadata Relationships
+* Playlists
+* Playlist Items
+* Playback History
+* User Settings
+* Saved Searches
+
+The schema should be normalized and optimized for fast searches.
+
+## User Interface
+
+Requirements:
+
+* Dark theme by default
+* Responsive layout
+* Fast filtering
+* Sortable tables
+* Grid view
+* List view
+* Multi-select editing
+* Context menus
+* Drag-and-drop support
+
+## Performance Requirements
+
+The application should be optimized for libraries containing:
+
+* 10,000+ media files
+* Thousands of tags
+* Hundreds of playlists
+
+Search results should remain fast even with large databases.
+
+## Media Playback Requirements
+
+The application is both a media manager and a media player.
+
+### Playback Features
+
+Video playback must support:
+
+* Play/Pause
+* Stop
+* Seek bar
+* Volume control
+* Mute
+* Playback speed adjustment
+* Fullscreen mode
+* Resume from last watched position
+* Frame stepping
+* Subtitle support
+* Next/Previous media controls
+
+Audio playback must support:
+
+* Play/Pause
+* Stop
+* Seek bar
+* Volume control
+* Playback speed adjustment
+* Background playback
+* Resume from last position
+* Next/Previous track controls
+
+### Playlist Playback
+
+Users must be able to:
+
+* Play an entire playlist
+* Shuffle playlist playback
+* Repeat single file
+* Repeat playlist
+* Queue files
+* Save playback queues
+* Continue playlists from last position
+
+The player should maintain playback history and remember watched/listened progress.
+
+## External Drive Support
+
+The application must fully support media libraries stored on:
+
+* Internal drives
+* External HDDs
+* External SSDs
+* USB drives
+* Network drives (future support)
+
+### Drive Tracking
+
+When scanning media, the application should store:
+
+* Full file path
+* File name
+* File size
+* File creation date
+* File modified date
+* Media duration
+* A file fingerprint/hash
+* Drive identifier/volume ID
+
+### Missing Drive Handling
+
+If an external drive is disconnected:
+
+* Do not delete media entries from the database.
+* Mark files as "Drive Offline" or "Unavailable".
+* Preserve all metadata, playlists, tags, ratings, history, and thumbnails.
+* Allow users to see unavailable media if desired through a filter.
+* Prevent playback until the drive is reconnected.
+
+### File Relocation Detection
+
+If a file is moved:
+
+* Detect moved files using fingerprints, hashes, metadata, and drive identifiers.
+* Automatically relink files when possible.
+* Preserve all metadata assignments.
+* Preserve playlist membership.
+* Preserve playback history.
+* Preserve ratings and favorites.
+
+Example:
+
+Old Path:
+D:\Videos\Fantasy\Dragon.mp4
+
+New Path:
+D:\Media\Fantasy\Dragon.mp4
+
+The application should automatically recognize that this is the same file and update the stored path rather than creating a duplicate entry.
+
+### Library Integrity
+
+The application must never lose metadata simply because:
+
+* A file was renamed.
+* A folder was renamed.
+* A file was moved.
+* An external drive was disconnected.
+* A drive letter changed.
+
+The system should prioritize preserving metadata relationships and reconnecting files whenever possible.

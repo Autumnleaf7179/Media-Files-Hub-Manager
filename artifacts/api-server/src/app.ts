@@ -31,4 +31,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+if (process.env["STATIC_DIR"]) {
+  const staticDir = process.env["STATIC_DIR"];
+  const { default: sirv } = await import("sirv");
+  app.use(sirv(staticDir, { single: true, dev: false }));
+}
+
 export default app;

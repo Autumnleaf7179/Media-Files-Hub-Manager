@@ -22,25 +22,7 @@ jobs:
           cache: pnpm
 
       - name: Patch workspace config for Windows CI
-        run: |
-          node -e "
-          const fs = require('fs');
-          // Read and normalize line endings
-          let c = fs.readFileSync('pnpm-workspace.yaml', 'utf8').replace(/\r\n/g, '\n');
-
-          // Remove overrides that block Windows-native rollup and esbuild modules
-          c = c.replace(/  \"rollup>@rollup\/rollup-win32[^\"]+\": \"-\"\n/g, '');
-          c = c.replace(/  \"esbuild>@esbuild\/win32[^\"]+\": \"-\"\n/g, '');
-
-          // Allow electron + embedded-postgres to run their binary-download scripts
-          c = c.replace(
-            '  - unrs-resolver\n',
-            '  - unrs-resolver\n  - electron\n  - \'@embedded-postgres/windows-x64\'\n'
-          );
-
-          fs.writeFileSync('pnpm-workspace.yaml', c);
-          console.log('pnpm-workspace.yaml patched for Windows CI');
-          "
+        run: node .github/ci-patch-windows.mjs
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile

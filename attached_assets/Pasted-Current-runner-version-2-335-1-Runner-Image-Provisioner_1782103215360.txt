@@ -1,0 +1,215 @@
+Current runner version: '2.335.1'
+Runner Image Provisioner
+Operating System
+Runner Image
+GITHUB_TOKEN Permissions
+Secret source: Actions
+Prepare workflow directory
+Prepare all required actions
+Getting action download info
+Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Download action repository 'pnpm/action-setup@v4' (SHA:b906affcce14559ad1aafd4ab0e942779e9f58b1)
+Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+Complete job name: build-windows
+4s
+Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Run actions/checkout@v4
+Syncing repository: Autumnleaf7179/Data-Hub-Explorer-Manager
+Getting Git version info
+Temporarily overriding HOME='D:\a\_temp\98a52e42-771f-4510-b291-6bdff4b29651' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager
+Deleting the contents of 'D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager'
+Initializing the repository
+Disabling automatic garbage collection
+Setting up auth
+Fetching the repository
+  "C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +5ca5f38720cfd43e554ce4c071ecfb3223b4c808:refs/remotes/origin/main
+  From https://github.com/Autumnleaf7179/Data-Hub-Explorer-Manager
+   * [new ref]         5ca5f38720cfd43e554ce4c071ecfb3223b4c808 -> origin/main
+Determining the checkout info
+"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+Checking out the ref
+"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+5ca5f38720cfd43e554ce4c071ecfb3223b4c808
+4s
+Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Run pnpm/action-setup@v4
+Running self-installer...
+  (node:8216) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+  (Use `node --trace-deprecation ...` to show where the warning was created)
+  Progress: resolved 1, reused 0, downloaded 0, added 0
+  Packages: +1
+  +
+  Progress: resolved 1, reused 0, downloaded 1, added 0
+  Progress: resolved 1, reused 0, downloaded 1, added 1
+  Progress: resolved 1, reused 0, downloaded 1, added 1, done
+  
+  dependencies:
+  + pnpm 10.34.4 (11.8.0 is available)
+  
+  Done in 4.1s
+Installation Completed!
+9s
+Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Run actions/setup-node@v4
+Attempting to download 20...
+(node:876) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Acquiring 20.20.2 - x64 from https://github.com/actions/node-versions/releases/download/20.20.2-23521894959/node-20.20.2-win32-x64.7z
+Extracting ...
+Adding to the cache ...
+Environment details
+C:\Windows\system32\cmd.exe /D /S /C "C:\Users\runneradmin\setup-pnpm\node_modules\.bin\pnpm.CMD store path --silent"
+D:\.pnpm-store\v10
+pnpm cache is not found
+24s
+Run pnpm install
+  
+Scope: all 10 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +697
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 697, reused 0, downloaded 42, added 0
+Progress: resolved 697, reused 0, downloaded 124, added 24
+Progress: resolved 697, reused 0, downloaded 229, added 73
+Progress: resolved 697, reused 0, downloaded 287, added 94
+Progress: resolved 697, reused 0, downloaded 294, added 98
+Progress: resolved 697, reused 0, downloaded 295, added 98
+Progress: resolved 697, reused 0, downloaded 313, added 102
+Progress: resolved 697, reused 0, downloaded 413, added 136
+Progress: resolved 697, reused 0, downloaded 503, added 168
+Progress: resolved 697, reused 0, downloaded 613, added 216
+Progress: resolved 697, reused 0, downloaded 697, added 293
+Progress: resolved 697, reused 0, downloaded 697, added 306
+Progress: resolved 697, reused 0, downloaded 697, added 443
+Progress: resolved 697, reused 0, downloaded 697, added 667
+Progress: resolved 697, reused 0, downloaded 697, added 697, done
+.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.27.3/node_modules/esbuild postinstall: [esbuild] Failed to find package "@esbuild/win32-x64" on the file system
+.../esbuild@0.27.3/node_modules/esbuild postinstall: This can happen if you use the "--no-optional" flag. The "optionalDependencies"
+.../esbuild@0.27.3/node_modules/esbuild postinstall: package.json feature is used by esbuild to install the correct binary executable
+.../esbuild@0.27.3/node_modules/esbuild postinstall: for your current platform. This install script will now attempt to work around
+.../esbuild@0.27.3/node_modules/esbuild postinstall: this. If that fails, you need to remove the "--no-optional" flag to use esbuild.
+.../esbuild@0.27.3/node_modules/esbuild postinstall: [esbuild] Trying to install package "@esbuild/win32-x64" using npm
+.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+devDependencies:
++ prettier 3.8.3
++ typescript 5.9.3
+. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+. preinstall: Done
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @embedded-postgres/windows-x64@17.10.0-beta.17,     │
+│   electron@36.9.5.                                                           │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 18.2s using pnpm v10.34.4
+5s
+Run node node_modules/electron/install.js
+  
+0s
+Run node node_modules/embedded-postgres/postinstall.js
+node:internal/modules/cjs/loader:1210
+  throw err;
+  ^
+Error: Cannot find module 'D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\artifacts\mediavault-electron\node_modules\embedded-postgres\postinstall.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Module._load (node:internal/modules/cjs/loader:1038:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Node.js v20.20.2
+Error: Process completed with exit code 1.
+10s
+Run npx --yes png-to-ico icon.png > icon.ico
+3s
+Run pnpm --filter @workspace/mediavault-electron run dist:win
+> @workspace/mediavault-electron@1.0.0 dist:win D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\artifacts\mediavault-electron
+> node build.mjs --package --win
+🖥  Building Express API server…
+▶ pnpm --filter @workspace/api-server run build
+> @workspace/api-server@0.0.0 build D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\artifacts\api-server
+> node ./build.mjs
+  dist\index.mjs                   2.2mb
+  dist\pino-worker.mjs           153.5kb
+  dist\pino-file.mjs             142.1kb
+  dist\pino-pretty.mjs           114.6kb
+  dist\thread-stream-worker.mjs    7.3kb
+  ...and 5 more output files...
+Done in 376ms
+✅ API server built → artifacts/api-server/dist/
+🌐 Building React frontend for Electron…
+▶ pnpm --filter @workspace/mediavault exec vite build --config vite.electron.config.ts
+D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\node_modules\.pnpm\rollup@4.60.3\node_modules\rollup\dist\native.js:115
+		throw new Error(
+		      ^
+Error: Cannot find module @rollup/rollup-win32-x64-msvc. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+    at requireWithFriendlyError (D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\node_modules\.pnpm\rollup@4.60.3\node_modules\rollup\dist\native.js:115:9)
+    at Object.<anonymous> (D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\node_modules\.pnpm\rollup@4.60.3\node_modules\rollup\dist\native.js:124:76)
+    ... 3 lines matching cause stack trace ...
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at cjsLoader (node:internal/modules/esm/translators:298:15)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24) {
+  [cause]: Error: Cannot find module '@rollup/rollup-win32-x64-msvc'
+  Require stack:
+  - D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\node_modules\.pnpm\rollup@4.60.3\node_modules\rollup\dist\native.js
+      at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+      at Module._load (node:internal/modules/cjs/loader:1038:27)
+      at Module.require (node:internal/modules/cjs/loader:1289:19)
+      at require (node:internal/modules/helpers:182:18)
+      at requireWithFriendlyError (D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\node_modules\.pnpm\rollup@4.60.3\node_modules\rollup\dist\native.js:97:10)
+      at Object.<anonymous> (D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\node_modules\.pnpm\rollup@4.60.3\node_modules\rollup\dist\native.js:124:76)
+      at Module._compile (node:internal/modules/cjs/loader:1521:14)
+      at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+      at Module.load (node:internal/modules/cjs/loader:1266:32)
+      at Module._load (node:internal/modules/cjs/loader:1091:12) {
+    code: 'MODULE_NOT_FOUND',
+    requireStack: [
+      'D:\\a\\Data-Hub-Explorer-Manager\\Data-Hub-Explorer-Manager\\node_modules\\.pnpm\\rollup@4.60.3\\node_modules\\rollup\\dist\\native.js'
+    ]
+  }
+}
+Node.js v20.20.2
+undefined
+D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\artifacts\mediavault:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vite build --config vite.electron.config.ts
+❌ Build failed: Command failed: pnpm --filter @workspace/mediavault exec vite build --config vite.electron.config.ts
+D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager\artifacts\mediavault-electron:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/mediavault-electron@1.0.0 dist:win: `node build.mjs --package --win`
+Exit status 1
+Error: Process completed with exit code 1.
+0s
+0s
+0s
+Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Post job cleanup.
+Pruning is unnecessary.
+3s
+Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Post job cleanup.
+"C:\Program Files\Git\bin\git.exe" version
+git version 2.54.0.windows.1
+Temporarily overriding HOME='D:\a\_temp\54f194d1-a908-49e3-b658-b216201be2a9' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\Data-Hub-Explorer-Manager\Data-Hub-Explorer-Manager
+"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+0s
+Cleaning up orphan processes
+Warning: Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, pnpm/action-setup@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

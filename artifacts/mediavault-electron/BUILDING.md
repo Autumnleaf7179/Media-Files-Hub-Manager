@@ -28,6 +28,26 @@ for Windows (.exe), macOS (.dmg), and Linux (.AppImage / .deb / .rpm).
 
 ---
 
+## Option A — GitHub Actions (builds in the cloud, no local tools needed)
+
+The repo includes `.github/workflows/build.yml`. Every push to `main`
+automatically builds all three platforms in parallel. You can also trigger it
+manually from the **Actions** tab → **Build MediaVault Installers** → **Run workflow**.
+
+**How to download the finished installer:**
+
+1. Go to your repository on GitHub
+2. Click the **Actions** tab
+3. Click the latest **Build MediaVault Installers** run
+4. Scroll to the bottom — **Artifacts** section
+5. Download **MediaVault-Windows** (`.exe`), **MediaVault-macOS** (`.dmg`), or **MediaVault-Linux** (`.AppImage` + `.deb`)
+
+> Artifacts are kept for **30 days** per run.
+
+---
+
+## Option B — Build locally
+
 ## Setup (once)
 
 ```bash

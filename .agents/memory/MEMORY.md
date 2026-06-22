@@ -1,2 +1,3 @@
 - [Drizzle SQL template refs](drizzle-sql-refs.md) — raw sql`` template in leftJoin queries must use table column refs (${table.col}), not string aliases like `mf.col`
 - [Playlist items seeding](playlist-seeding.md) — ON CONFLICT DO NOTHING silently no-ops if no unique constraint exists; seed without ON CONFLICT or add the constraint first
+- [Electron CI build constraints](electron-ci-build.md) — electron + embedded-postgres postinstalls skipped by onlyBuiltDependencies; must trigger manually in CI

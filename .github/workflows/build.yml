@@ -1,4 +1,4 @@
-name: Build MediaVault Installers
+name: Build MediaVault Windows Installer
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ── Windows → .exe ──────────────────────────────────────────────────────────
   build-windows:
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,141 +21,43 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - name: Install workspace dependencies
-        run: pnpm install
+      - name: Patch workspace config for Windows CI
+        run: |
+          node -e "
+          const fs = require('fs');
+          // Read and normalize line endings
+          let c = fs.readFileSync('pnpm-workspace.yaml', 'utf8').replace(/\r\n/g, '\n');
 
-      - name: Download Electron binary
-        working-directory: artifacts/mediavault-electron
-        run: node node_modules/electron/install.js
-        shell: bash
+          // Remove overrides that block Windows-native rollup and esbuild modules
+          c = c.replace(/  \"rollup>@rollup\/rollup-win32[^\"]+\": \"-\"\n/g, '');
+          c = c.replace(/  \"esbuild>@esbuild\/win32[^\"]+\": \"-\"\n/g, '');
 
-      - name: Download embedded-postgres binary
-        working-directory: artifacts/mediavault-electron
-        run: node node_modules/embedded-postgres/postinstall.js
-        continue-on-error: true
-        shell: bash
+          // Allow electron + embedded-postgres to run their binary-download scripts
+          c = c.replace(
+            '  - unrs-resolver\n',
+            '  - unrs-resolver\n  - electron\n  - \'@embedded-postgres/windows-x64\'\n'
+          );
 
-      - name: Generate .ico icon
+          fs.writeFileSync('pnpm-workspace.yaml', c);
+          console.log('pnpm-workspace.yaml patched for Windows CI');
+          "
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Generate Windows icon (.ico)
         working-directory: artifacts/mediavault-electron/build-resources
         run: npx --yes png-to-ico icon.png > icon.ico
-        shell: bash
 
       - name: Build Windows installer
         run: pnpm --filter @workspace/mediavault-electron run dist:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Windows installer
+      - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
           name: MediaVault-Windows
           path: artifacts/mediavault-electron/dist-installer/*.exe
-          if-no-files-found: error
-          retention-days: 30
-
-  # ── macOS → .dmg ────────────────────────────────────────────────────────────
-  build-macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Allow esbuild darwin packages
-        run: |
-          python3 - <<'EOF'
-          with open('pnpm-workspace.yaml', 'r') as f:
-              lines = f.readlines()
-          filtered = [l for l in lines if 'esbuild>@esbuild/darwin' not in l]
-          with open('pnpm-workspace.yaml', 'w') as f:
-              f.writelines(filtered)
-          EOF
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install workspace dependencies
-        run: pnpm install
-
-      - name: Download Electron binary
-        working-directory: artifacts/mediavault-electron
-        run: node node_modules/electron/install.js
-
-      - name: Download embedded-postgres binary
-        working-directory: artifacts/mediavault-electron
-        run: node node_modules/embedded-postgres/postinstall.js
-        continue-on-error: true
-
-      - name: Generate .icns icon
-        run: |
-          ICONSET=/tmp/mediavault.iconset
-          SRC=artifacts/mediavault-electron/build-resources/icon.png
-          mkdir -p "$ICONSET"
-          for sz in 16 32 64 128 256 512; do
-            sips -z $sz $sz "$SRC" --out "$ICONSET/icon_${sz}x${sz}.png" >/dev/null
-          done
-          iconutil -c icns "$ICONSET" \
-            -o artifacts/mediavault-electron/build-resources/icon.icns
-
-      - name: Build macOS installer
-        run: pnpm --filter @workspace/mediavault-electron run dist:mac
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: "false"
-
-      - name: Upload macOS installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: MediaVault-macOS
-          path: artifacts/mediavault-electron/dist-installer/*.dmg
-          if-no-files-found: error
-          retention-days: 30
-
-  # ── Linux → .AppImage + .deb ────────────────────────────────────────────────
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install Linux build dependencies
-        run: sudo apt-get install -y rpm
-
-      - name: Install workspace dependencies
-        run: pnpm install
-
-      - name: Download Electron binary
-        working-directory: artifacts/mediavault-electron
-        run: node node_modules/electron/install.js
-
-      - name: Download embedded-postgres binary
-        working-directory: artifacts/mediavault-electron
-        run: node node_modules/embedded-postgres/postinstall.js
-        continue-on-error: true
-
-      - name: Build Linux installers
-        run: pnpm --filter @workspace/mediavault-electron run dist:linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Linux installers
-        uses: actions/upload-artifact@v4
-        with:
-          name: MediaVault-Linux
-          path: |
-            artifacts/mediavault-electron/dist-installer/*.AppImage
-            artifacts/mediavault-electron/dist-installer/*.deb
           if-no-files-found: error
           retention-days: 30

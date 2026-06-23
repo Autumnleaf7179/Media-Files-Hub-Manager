@@ -86,10 +86,10 @@ async function packageApp() {
     ? "--mac"
     : args.includes("--linux")
     ? "--linux"
-    : "";          // Let electron-builder auto-detect current platform
+    : "";
 
-  const cmd = `pnpm exec electron-builder ${platform} --config`.trim();
-  // electron-builder reads "build" from package.json by default
+  const cmd = `pnpm exec electron-builder ${platform} --config --publish never`.trim();
+
   console.log(`\n🏗  Running electron-builder (${platform || "current platform"})…`);
   run(cmd, __dirname);
   console.log("\n✅ Installer(s) written to dist-installer/");

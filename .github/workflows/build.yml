@@ -41,9 +41,7 @@ jobs:
         run: npx png-to-ico icon.png > icon.ico
 
       - name: Build Windows installer
-        run: pnpm --filter @workspace/mediavault-electron run dist:win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm --filter @workspace/mediavault-electron run dist:win -- --publish never
 
       - name: Upload installer
         uses: actions/upload-artifact@v4

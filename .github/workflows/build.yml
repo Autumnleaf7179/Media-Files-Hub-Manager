@@ -41,7 +41,7 @@ jobs:
         run: npx png-to-ico icon.png > icon.ico
 
       - name: Build Windows installer
-        run: pnpm --filter @workspace/mediavault-electron run dist:win -- --publish never
+        run: pnpm --filter @workspace/mediavault-electron run dist:win
 
       - name: Upload installer
         uses: actions/upload-artifact@v4

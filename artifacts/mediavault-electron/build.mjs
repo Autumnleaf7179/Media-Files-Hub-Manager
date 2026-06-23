@@ -51,9 +51,6 @@ async function buildMain() {
       "embedded-postgres",
       "*.node",
     ],
-    define: {
-      "import.meta.url": "__filename",
-    },
     logLevel: "info",
   });
 

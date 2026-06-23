@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "MediaVault — local-first media manager desktop app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Autumnleaf7179/Data-Hub-Explorer-Manager.git"
+  },
   "main": "dist/main.js",
   "scripts": {
     "build": "node build.mjs",
@@ -22,7 +26,6 @@
     "typescript": "~5.9.3"
   },
   "build": {
-    "extends": null,
     "appId": "com.mediavault.app",
     "productName": "MediaVault",
     "copyright": "Copyright © 2024",
@@ -38,12 +41,17 @@
       {
         "from": "../mediavault/dist-electron/",
         "to": "frontend",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "../api-server/dist/",
         "to": "server",
-        "filter": ["**/*", "!*.map"]
+        "filter": [
+          "**/*",
+          "!**/*.map"
+        ]
       }
     ],
     "asarUnpack": [
@@ -52,7 +60,12 @@
     "win": {
       "icon": "build-resources/icon.ico",
       "target": [
-        { "target": "nsis", "arch": ["x64"] }
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
     "nsis": {
@@ -67,27 +80,58 @@
       "icon": "build-resources/icon.icns",
       "category": "public.app-category.entertainment",
       "target": [
-        { "target": "dmg", "arch": ["x64", "arm64"] }
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
       ]
     },
     "dmg": {
       "title": "MediaVault",
       "contents": [
-        { "x": 140, "y": 200 },
-        { "x": 380, "y": 200, "type": "link", "path": "/Applications" }
+        {
+          "x": 140,
+          "y": 200
+        },
+        {
+          "x": 380,
+          "y": 200,
+          "type": "link",
+          "path": "/Applications"
+        }
       ]
     },
     "linux": {
       "icon": "build-resources/icon.png",
       "category": "AudioVideo",
       "target": [
-        { "target": "AppImage", "arch": ["x64"] },
-        { "target": "deb", "arch": ["x64"] },
-        { "target": "rpm", "arch": ["x64"] }
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     },
     "deb": {
-      "depends": ["libsecret-1-0"]
+      "depends": [
+        "libsecret-1-0"
+      ]
     }
   }
 }

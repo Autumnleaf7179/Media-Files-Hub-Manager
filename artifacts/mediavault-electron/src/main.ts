@@ -8,11 +8,8 @@ import {
 } from "electron";
 import { spawn, type ChildProcess } from "child_process";
 import path from "path";
-import { fileURLToPath } from "url";
 import { createConnection } from "net";
 import EmbeddedPostgres from "embedded-postgres";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const IS_DEV = !app.isPackaged;

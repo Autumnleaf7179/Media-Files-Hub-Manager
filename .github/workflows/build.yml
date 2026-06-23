@@ -2,7 +2,9 @@ name: Build MediaVault Windows Installer
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+
   workflow_dispatch:
 
 jobs:
@@ -10,26 +12,33 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
       - name: Patch workspace config for Windows CI
-        run: node .github/ci-patch-windows.mjs
+        run: node scripts/patch-workspace.cjs
+
+      - name: Clean pnpm store (important for CI fix)
+        run: pnpm store prune
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
       - name: Generate Windows icon (.ico)
         working-directory: artifacts/mediavault-electron/build-resources
-        run: npx --yes png-to-ico icon.png > icon.ico
+        shell: cmd
+        run: npx png-to-ico icon.png > icon.ico
 
       - name: Build Windows installer
         run: pnpm --filter @workspace/mediavault-electron run dist:win

@@ -1,0 +1,54 @@
+name: Build MediaVault Windows Installer
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Patch workspace config for Windows CI
+        run: node scripts/patch-workspace.cjs
+
+      - name: Clean pnpm store (important for CI fix)
+        run: pnpm store prune
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Generate Windows icon (.ico)
+        working-directory: artifacts/mediavault-electron/build-resources
+        shell: cmd
+        run: npx png-to-ico icon.png > icon.ico
+
+      - name: Build Windows installer
+        run: pnpm --filter @workspace/mediavault-electron run dist:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: MediaVault-Windows
+          path: artifacts/mediavault-electron/dist-installer/*.exe
+          if-no-files-found: error
+          retention-days: 30

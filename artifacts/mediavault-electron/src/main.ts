@@ -13,6 +13,24 @@ import EmbeddedPostgres from "embedded-postgres";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const IS_DEV = !app.isPackaged;
+
+// ── Asar spawn fix ────────────────────────────────────────────────────────────
+// embedded-postgres resolves binary paths using import.meta.url, which inside
+// a packaged Electron app points into app.asar. Executables cannot be spawned
+// from inside an asar archive — they must come from app.asar.unpacked.
+// This patch rewrites any spawn command that still references app.asar so it
+// uses the correct app.asar.unpacked path instead.
+if (!IS_DEV) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const cp = require("child_process");
+  const _origSpawn = cp.spawn.bind(cp);
+  cp.spawn = function (cmd: string, args?: unknown[], opts?: unknown) {
+    if (typeof cmd === "string" && cmd.includes("app.asar") && !cmd.includes("app.asar.unpacked")) {
+      cmd = cmd.replace(/(app\.asar)([/\\])/g, "app.asar.unpacked$2");
+    }
+    return _origSpawn(cmd, args, opts);
+  };
+}
 const API_PORT = 18765;
 const PG_PORT = 18766;
 const PG_USER = "mediavault";

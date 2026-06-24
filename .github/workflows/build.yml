@@ -34,10 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
-
-      - name: Download embedded-postgres binaries
-        run: node artifacts/mediavault-electron/node_modules/embedded-postgres/postinstall.js
-
+        
       - name: Generate Windows icon (.ico)
         working-directory: artifacts/mediavault-electron/build-resources
         shell: cmd

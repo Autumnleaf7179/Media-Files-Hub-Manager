@@ -16,8 +16,9 @@
     "dist:linux": "node build.mjs --package --linux"
   },
   "dependencies": {
-    "embedded-postgres": "17.10.0-beta.17"
-  },
+    "embedded-postgres": "17.10.0-beta.17",
+    "@embedded-postgres/windows-x64": "17.10.0-beta.17"
+  }
   "devDependencies": {
     "electron": "^36.3.1",
     "electron-builder": "^26.0.12",
@@ -55,8 +56,10 @@
       }
     ],
     "asarUnpack": [
-      "node_modules/embedded-postgres/**"
-    ],
+      "**/node_modules/embedded-postgres/**",
+      "**/node_modules/@embedded-postgres/**",
+      "**/*.exe"
+    ]
     "win": {
       "icon": "build-resources/icon.ico",
       "target": [

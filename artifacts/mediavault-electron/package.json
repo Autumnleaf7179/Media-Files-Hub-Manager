@@ -59,7 +59,7 @@
       "**/node_modules/embedded-postgres/**",
       "**/node_modules/@embedded-postgres/**",
       "**/*.exe"
-    ]
+    ],
     "win": {
       "icon": "build-resources/icon.ico",
       "target": [
